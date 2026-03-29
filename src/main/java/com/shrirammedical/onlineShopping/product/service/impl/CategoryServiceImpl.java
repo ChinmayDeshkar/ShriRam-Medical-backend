@@ -6,6 +6,8 @@ import com.shrirammedical.onlineShopping.product.repository.CategoryRepo;
 import com.shrirammedical.onlineShopping.product.service.CategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +28,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> findAllCategory() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        log.info("{} searched for category", auth.getName());
         return categoryRepo.findAll();
     }
 

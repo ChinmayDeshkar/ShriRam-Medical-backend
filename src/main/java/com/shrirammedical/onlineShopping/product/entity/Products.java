@@ -1,9 +1,12 @@
 package com.shrirammedical.onlineShopping.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,5 +25,11 @@ public class Products {
     private Long stock;
     private Long categoryId;
     private Boolean active;
+    private String createdBy;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime createdDate = LocalDateTime.now();
+    private String updatedBy;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private  LocalDateTime updatedDate;
 
 }

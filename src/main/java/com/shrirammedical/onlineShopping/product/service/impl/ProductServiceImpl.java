@@ -1,5 +1,6 @@
 package com.shrirammedical.onlineShopping.product.service.impl;
 
+import com.shrirammedical.onlineShopping.config.JwtUtil;
 import com.shrirammedical.onlineShopping.product.dto.ProductUpdateRequest;
 import com.shrirammedical.onlineShopping.product.dto.SearchProductRequest;
 import com.shrirammedical.onlineShopping.product.entity.Category;
@@ -9,8 +10,11 @@ import com.shrirammedical.onlineShopping.product.repository.ProductRepo;
 import com.shrirammedical.onlineShopping.product.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -32,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Something getting null while inserting product");
         }
 
+        product.setCreatedBy(JwtUtil.getCurrentUser());
         return productRepo.save(product);
     }
 
@@ -87,6 +92,8 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
+        product.setUpdatedBy(JwtUtil.getCurrentUser());
+        product.setUpdatedDate(LocalDateTime.now());
         return productRepo.save(product);
     }
 
