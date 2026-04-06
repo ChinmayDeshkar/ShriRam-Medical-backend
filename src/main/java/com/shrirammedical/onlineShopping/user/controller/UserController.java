@@ -1,9 +1,7 @@
 package com.shrirammedical.onlineShopping.user.controller;
 
-import com.shrirammedical.onlineShopping.user.dto.AdminUserUpdateRequest;
-import com.shrirammedical.onlineShopping.user.dto.AuthRequest;
-import com.shrirammedical.onlineShopping.user.dto.AuthResponse;
-import com.shrirammedical.onlineShopping.user.dto.UserUpdateRequest;
+import com.shrirammedical.onlineShopping.config.JwtUtil;
+import com.shrirammedical.onlineShopping.user.dto.*;
 import com.shrirammedical.onlineShopping.user.entity.User;
 import com.shrirammedical.onlineShopping.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +22,18 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
-        User createadUser = userService.register(user);
-        return ResponseEntity.ok("User registered successfully, userid= " + createadUser.getUserId());
+        try{
+            User createadUser = userService.register(user);
+            return ResponseEntity.ok(Map.of("Message", "User registered successfully", "UserId", createadUser.getUserId()));
+        } catch (RuntimeException re){
+            log.error("Error while validating signup request, error = " + re );
+            re.printStackTrace();
+            return ResponseEntity.badRequest().body(re.getMessage());
+        }
+         catch (Exception e) {
+            log.error("Error while signing up user, error = " + e);
+            return ResponseEntity.internalServerError().body("User not registered");
+        }
     }
 
     @PostMapping("/login")
@@ -62,7 +70,20 @@ public class UserController {
             userService.updateByAdmin(id, request);
             return ResponseEntity.ok(Map.of("Message", "User profile updated"));
         } catch (Exception e) {
-            log.error("Error while updating user whith id = " + id);
+            log.error("Error while updating user with id = " + id);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasAnyRole('CUSTOMER','EMPLOYEE','ADMIN')")
+    public ResponseEntity<?> getMyProfile() {
+        try {
+            String userId = JwtUtil.getCurrentUser();
+            UserProfile user = userService.getUserById(userId);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            log.error("Error while fetching user profile");
             throw new RuntimeException(e);
         }
     }

@@ -1,7 +1,7 @@
 package com.shrirammedical.onlineShopping.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.shrirammedical.onlineShopping.common.Role;
+import com.shrirammedical.onlineShopping.common.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,8 +25,8 @@ public class User {
     @Column(unique = true)
     private String phoneNumber;
     private String password;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(name = "num_role", nullable = false)
+    private Long roleId;
     private boolean active;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdDate = LocalDateTime.now();

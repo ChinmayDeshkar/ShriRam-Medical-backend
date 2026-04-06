@@ -1,6 +1,7 @@
 package com.shrirammedical.onlineShopping.config;
 
 
+import com.shrirammedical.onlineShopping.common.role.RoleService;
 import com.shrirammedical.onlineShopping.user.entity.User;
 import com.shrirammedical.onlineShopping.user.repository.UserRepo;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private RoleService roleService;
+
     @Override
     public UserDetails loadUserByUsername(String userId) {
         User user = userRepo.findById(userId)
@@ -27,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUserId(),
                 user.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+                List.of(new SimpleGrantedAuthority("ROLE_" + roleService.getRoleNameById(user.getRoleId())))
         );
     }
 }

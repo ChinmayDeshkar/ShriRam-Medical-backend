@@ -1,17 +1,20 @@
 package com.shrirammedical.onlineShopping.user.dto;
 
-import com.shrirammedical.onlineShopping.common.role.Role;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
-public class AdminUserUpdateRequest {
+public class UserProfile {
 
+    private String userId;
     private String name;
     private String email;
     private String phoneNumber;
+    private String password;
     private String role;
-    private Boolean active;
-
 }

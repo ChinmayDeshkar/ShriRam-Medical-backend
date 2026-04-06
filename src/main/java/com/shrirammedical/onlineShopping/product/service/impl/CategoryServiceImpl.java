@@ -1,5 +1,6 @@
 package com.shrirammedical.onlineShopping.product.service.impl;
 
+import com.shrirammedical.onlineShopping.product.dto.CategoryDto;
 import com.shrirammedical.onlineShopping.product.dto.CategoryUpdateRequest;
 import com.shrirammedical.onlineShopping.product.entity.Category;
 import com.shrirammedical.onlineShopping.product.repository.CategoryRepo;
@@ -27,11 +28,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> findAllCategory() {
+    public List<CategoryDto> findAllCategory() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
+        List<CategoryDto> categoryDto = createCategoryDto(categoryRepo.findAll());
         log.info("{} searched for category", auth.getName());
-        return categoryRepo.findAll();
+        return categoryDto;
     }
 
     @Override
@@ -51,5 +52,13 @@ public class CategoryServiceImpl implements CategoryService {
             category.setDescription(request.getDescription());
         }
         return categoryRepo.save(category);
+    }
+
+
+    // ------------------- Helper Methods ------------------ //
+    private List<CategoryDto> createCategoryDto(List<Category> categoryList) {
+        return categoryList.stream()
+                .map(category ->
+                        new CategoryDto(category.getCategoryId(), category.getCategoryName(), category.getDescription())).toList();
     }
 }

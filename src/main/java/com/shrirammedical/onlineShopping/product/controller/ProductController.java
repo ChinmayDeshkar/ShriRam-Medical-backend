@@ -22,6 +22,15 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+    @GetMapping("/all")
+    List<Products> getAllProducts(){
+        try {
+            return productService.getAllProducts();
+        } catch (Exception e) {
+            log.error("Error while fetching all products, " + e);
+            throw new RuntimeException(e);
+        }
+    }
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @PostMapping("/add")
     ResponseEntity<?> addProduct(@RequestBody Products product){
@@ -29,14 +38,18 @@ public class ProductController {
             productService.addProduct(product);
             return ResponseEntity.status(HttpStatus.OK).body(Map.of("Message", "Product added"));
         } catch (Exception e) {
-            log.error("Error occured while adding product, " + e);
+            log.error("Error occurred while adding product, " + e);
             throw new RuntimeException("Error: " + e);
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE','CUSTOMER')")
     @GetMapping("/search")
-    List<Products> searchProduct(@RequestBody SearchProductRequest request){
+    List<Products> searchProduct(@RequestParam(required = false) Long productId,
+                                 @RequestParam(required = false) String productName,
+                                 @RequestParam(required = false) Long categoryId,
+                                 @RequestParam(required = false) Boolean active){
+
+        SearchProductRequest request = createSearchProductRequest(productId, productName, categoryId, active);
         try{
             return productService.searchProducts(request);
         } catch (Exception e) {
@@ -68,5 +81,27 @@ public class ProductController {
             log.error("Error while deleting product, id = " + productId);
             throw new RuntimeException(e);
         }
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE', 'CUSTOMER')")
+    @GetMapping("/getByCategory/{categoryId}")
+    List<Products> getProductsByCategory(@PathVariable Long categoryId) {
+        try {
+            return productService.getProductsByProductType(categoryId);
+        } catch (Exception e) {
+            log.error("Error while fetching products by category, category id = " + categoryId);
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    // ------------------------ Helper Methods ----------------------- //
+    private SearchProductRequest createSearchProductRequest(Long productId, String productName, Long categoryId, Boolean active) {
+        SearchProductRequest request = new SearchProductRequest();
+        request.setProductId(productId);
+        request.setProductName(productName);
+        request.setCategoryId(categoryId);
+        request.setActive(active);
+        return request;
     }
 }

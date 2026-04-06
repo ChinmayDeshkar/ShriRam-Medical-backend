@@ -1,9 +1,11 @@
 package com.shrirammedical.onlineShopping.user.service.impl;
 
-import com.shrirammedical.onlineShopping.common.Role;
+import com.shrirammedical.onlineShopping.common.role.Role;
+import com.shrirammedical.onlineShopping.common.role.RoleService;
 import com.shrirammedical.onlineShopping.config.JwtUtil;
 import com.shrirammedical.onlineShopping.user.dto.AdminUserUpdateRequest;
 import com.shrirammedical.onlineShopping.user.dto.AuthRequest;
+import com.shrirammedical.onlineShopping.user.dto.UserProfile;
 import com.shrirammedical.onlineShopping.user.dto.UserUpdateRequest;
 import com.shrirammedical.onlineShopping.user.entity.User;
 import com.shrirammedical.onlineShopping.user.repository.UserRepo;
@@ -23,14 +25,20 @@ public class UserServiceImpl implements UserService {
     private UserRepo userRepository;
 
     @Autowired
+    private RoleService roleService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Override
     public User register(User user) {
+
+        validateUser(user); // It will throw an error if user is invalid
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.CUSTOMER); // default
+        user.setRoleId(roleService.getRoleIdByName(Role.customer)); // default role
         user.setActive(true);
         long count = userRepository.count() + 1;
         log.info(String.valueOf(count));
@@ -38,6 +46,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    @Override
     public String login(AuthRequest request) {
         log.debug("Login request for userid: {}", request.getUsername());
         User user = userRepository.findById(request.getUsername())
@@ -100,11 +109,56 @@ public class UserServiceImpl implements UserService {
             user.setPhoneNumber(request.getPhoneNumber());
         }
         if(request.getRole() != null){
-            user.setRole(request.getRole());
+            user.setRoleId(roleService.getRoleIdByName(request.getRole()));
         }
 
         user.setUpdatedDate(LocalDateTime.now());
 
         return userRepository.save(user);
+    }
+
+    /**
+     * @param userId
+     * @return
+     */
+    @Override
+    public UserProfile getUserById(String userId) {
+
+        User user =  userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return createUserProfile(user);
+    }
+
+    // ------------------- Helper Methods ------------------ //
+
+    // Validate user else throw error
+    private void validateUser(User user){
+        if(userRepository.existsByEmail(user.getEmail())){
+            throw new RuntimeException("Email already exists");
+        }
+        if (userRepository.existsByPhoneNumber(user.getPhoneNumber())){
+            throw new RuntimeException("Phone number already exists");
+        }
+        if (user.getPhoneNumber() == null || user.getPhoneNumber().length() != 10 || !user.getPhoneNumber().matches("\\d{10}")){
+            throw new RuntimeException("Phone number is either null or not valid, it should be 10 digits");
+        }
+        if(user.getPassword() == null
+                || user.getPassword().length() < 8
+                || !user.getPassword().matches("^(?=.*[A-Z])(?=.*\\d).+$")){
+
+            throw new RuntimeException("Password is either null or not valid, it should be at least 8 characters" +
+                    " and must contain at least one uppercase letter and one number");
+        }
+
+    }
+
+    // Convert User entity to UserProfile DTO
+    private UserProfile createUserProfile(User user){
+        UserProfile profile = new UserProfile();
+        profile.setUserId(user.getUserId());
+        profile.setName(user.getName());
+        profile.setEmail(user.getEmail());
+        profile.setPhoneNumber(user.getPhoneNumber());
+        profile.setRole(roleService.getRoleNameById(user.getRoleId()));
+        return profile;
     }
 }
