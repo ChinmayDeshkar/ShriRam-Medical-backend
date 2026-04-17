@@ -7,10 +7,13 @@ import com.shrirammedical.onlineShopping.cart.entity.Cart;
 import com.shrirammedical.onlineShopping.cart.entity.CartItem;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CartService {
 
     Cart addToCart(AddToCartRequest request);
     CartResponse getCart();
     void updateCartItem(UpdateCartItemRequest request);
+    int getCartQuantityByProductAndUserId(Long productId);
+    void deleteCartItem(Long productId);
 }

@@ -2,6 +2,7 @@ package com.shrirammedical.onlineShopping.user.service.impl;
 
 import com.shrirammedical.onlineShopping.common.role.Role;
 import com.shrirammedical.onlineShopping.common.role.RoleService;
+import com.shrirammedical.onlineShopping.config.JwtFilter;
 import com.shrirammedical.onlineShopping.config.JwtUtil;
 import com.shrirammedical.onlineShopping.user.dto.AdminUserUpdateRequest;
 import com.shrirammedical.onlineShopping.user.dto.AuthRequest;
@@ -10,6 +11,7 @@ import com.shrirammedical.onlineShopping.user.dto.UserUpdateRequest;
 import com.shrirammedical.onlineShopping.user.entity.User;
 import com.shrirammedical.onlineShopping.user.repository.UserRepo;
 import com.shrirammedical.onlineShopping.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -128,6 +130,14 @@ public class UserServiceImpl implements UserService {
         return createUserProfile(user);
     }
 
+    /**
+     * @return
+     */
+    @Override
+    public Boolean isLoggedIn() {
+        return jwtUtil.validateToken();
+    }
+
     // ------------------- Helper Methods ------------------ //
 
     // Validate user else throw error
@@ -160,5 +170,13 @@ public class UserServiceImpl implements UserService {
         profile.setPhoneNumber(user.getPhoneNumber());
         profile.setRole(roleService.getRoleNameById(user.getRoleId()));
         return profile;
+    }
+
+    private String getTokenFromRequest(HttpServletRequest request) {
+        String bearer = request.getHeader("Authorization");
+        if (bearer != null && bearer.startsWith("Bearer ")) {
+            return bearer.substring(7);
+        }
+        return null;
     }
 }

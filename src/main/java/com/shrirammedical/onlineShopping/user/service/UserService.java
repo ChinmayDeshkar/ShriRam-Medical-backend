@@ -17,4 +17,6 @@ public interface UserService {
     User updateByAdmin(String userId, AdminUserUpdateRequest request);
 
     UserProfile getUserById(String userId);
+
+    Boolean isLoggedIn();
 }

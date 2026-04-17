@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -24,14 +25,20 @@ public class CartController {
     @GetMapping("/get")
     @PreAuthorize("hasRole('CUSTOMER')")
     public CartResponse getCart(){
+        cartService.getCartQuantityByProductAndUserId(15L);
         return cartService.getCart();
     }
 
+    @GetMapping("/product-in-cart")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public int getProductInCart(@RequestParam Long productId){
+        return cartService.getCartQuantityByProductAndUserId(productId);
+    }
     @PostMapping("/add")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<?> addToCart(@RequestBody AddToCartRequest request){
         cartService.addToCart(request);
-        return ResponseEntity.ok("added");
+        return ResponseEntity.ok(Map.of("message", "success"));
     }
 
     @PutMapping("/update")
@@ -39,7 +46,7 @@ public class CartController {
     public ResponseEntity<?> updateCartItem(@RequestBody UpdateCartItemRequest request){
         try {
             cartService.updateCartItem(request);
-            return ResponseEntity.ok("Updated");
+            return ResponseEntity.ok(Map.of("message", "updated"));
         } catch (RuntimeException re){
             log.error("Error occured while updating cart item, error = " + re);
             re.printStackTrace();
@@ -47,4 +54,10 @@ public class CartController {
         }
     }
 
+    @DeleteMapping("/remove-product")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<?> removeProductFromCart(@RequestParam Long productId){
+        cartService.deleteCartItem(productId);
+        return ResponseEntity.ok(Map.of("message", "success"));
+    }
 }

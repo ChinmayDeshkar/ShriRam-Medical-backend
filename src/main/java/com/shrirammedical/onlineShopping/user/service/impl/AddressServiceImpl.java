@@ -4,11 +4,13 @@ import com.shrirammedical.onlineShopping.user.entity.Address;
 import com.shrirammedical.onlineShopping.user.repository.AddressRepo;
 import com.shrirammedical.onlineShopping.user.service.AddressService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class AddressServiceImpl implements AddressService {
@@ -44,6 +46,10 @@ public class AddressServiceImpl implements AddressService {
      */
     @Override
     public Address setAddress(Address address) {
+        if (addressRepo.existsAddressByAddressLine1AndAddressLine2(address.getAddressLine1(), address.getAddressLine2())) {
+            return null;
+        }
+        log.debug("Address: " + address.toString());
         String userId = getCurrentUser();
         Address address1 = new Address();
         address1.setUserId(userId);
@@ -55,6 +61,7 @@ public class AddressServiceImpl implements AddressService {
         address1.setCountry(address.getCountry());
         address1.setDefault(address.isDefault());
         address1.setLastUsed(true);
+        log.debug("Address1: " + address1.toString());
         return addressRepo.save(address1);
     }
 

@@ -15,5 +15,4 @@ public class CartItemsDto {
     private Integer quantity;
     private Double price; // snapshot of price
 
-
 }

@@ -1,7 +1,10 @@
 package com.shrirammedical.onlineShopping.cart.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,4 +26,7 @@ public class CartItem {
     @ManyToOne
     private Cart cart;
 
+    @Column(name = "dte_added")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime addedOn = LocalDateTime.now();
 }

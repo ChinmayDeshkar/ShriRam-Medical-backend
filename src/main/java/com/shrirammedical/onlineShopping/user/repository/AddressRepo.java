@@ -18,4 +18,5 @@ public interface AddressRepo extends JpaRepository<Address, Long> {
     @Query("SELECT a FROM Address a WHERE a.userId = :userId AND lastUsed = true")
     Address findLastUsedAddressByUserId(@Param("userId") String userId);
 
+    boolean existsAddressByAddressLine1AndAddressLine2(String addressLine1, String addressLine2);
 }

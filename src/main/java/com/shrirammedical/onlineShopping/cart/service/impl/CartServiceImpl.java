@@ -13,13 +13,16 @@ import com.shrirammedical.onlineShopping.product.entity.Products;
 import com.shrirammedical.onlineShopping.product.repository.ProductRepo;
 import com.shrirammedical.onlineShopping.user.entity.User;
 import com.shrirammedical.onlineShopping.user.repository.UserRepo;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -74,13 +77,14 @@ public class CartServiceImpl implements CartService {
 
         Cart cart = cartRepo.findByUserId(userId)
                 .orElse(null);
-        log.info("Cart: " + cart);
 
         if (cart == null){
+            log.info("Cart is empty");
             return null;
         }
 
         List<CartItemsDto> items = cart.getItems().stream()
+                .sorted(Comparator.comparing(CartItem::getAddedOn).reversed())
                 .map(item -> new CartItemsDto(
                         item.getId(),
                         item.getProductId(),
@@ -97,9 +101,12 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public void updateCartItem(UpdateCartItemRequest request) {
+        Cart cart = cartRepo.findByUserId(getCurrentUser())
+                .orElseThrow(() -> new RuntimeException("No active cart for user: " + getCurrentUser()));
 
-        CartItem cartItem = cartItemRepo.findById(request.getItemId())
+        CartItem cartItem = cartItemRepo.findByProductIdAndCart(request.getItemId(), cart)
                 .orElseThrow(() -> new RuntimeException("Item not Found"));
 
         if(request.getQuantity() < 0) {
@@ -108,12 +115,42 @@ public class CartServiceImpl implements CartService {
 
         if(request.getQuantity() == 0){
             // remove product
-            removeItem(request.getItemId());
+            removeItem(request.getItemId(), cart);
         }
         else{
             // update quantity
             updateItemQuantity(request.getQuantity(), cartItem);
         }
+    }
+
+    /**
+     * @param productId
+     * @return
+     */
+    @Override
+    public int getCartQuantityByProductAndUserId(Long productId) {
+        CartResponse cartResponse = getCart();
+        cartResponse.getItems().forEach(System.out::println);
+        int quantity = cartResponse.getItems().stream()
+                .filter(item -> Objects.equals(item.getProductId(), productId))
+                .mapToInt(CartItemsDto::getQuantity)
+                .findFirst()
+                .orElse(0);
+        log.info("Quantity: {}", quantity);
+        return quantity;
+    }
+
+    /**
+     * @param productId
+     */
+    @Override
+    @Transactional
+    public void deleteCartItem(Long productId) {
+        Cart cart = getCartOrCreate(getCurrentUser());
+        if(cart == null) {
+            return;
+        }
+        removeItem(productId, cart);
     }
 
     // Helpers Methods
@@ -134,8 +171,10 @@ public class CartServiceImpl implements CartService {
                 });
     }
 
-    private void removeItem(Long itemId){
-        cartItemRepo.deleteById(itemId);
+
+    private void removeItem(Long itemId, Cart cart){
+        log.debug("Removing item: {}", itemId);
+        cartItemRepo.deleteByProductIdAndCart(itemId, cart);
     }
 
     private void updateItemQuantity(Integer quantity, CartItem cartItem){

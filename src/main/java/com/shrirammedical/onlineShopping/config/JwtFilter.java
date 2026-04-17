@@ -1,9 +1,12 @@
 package com.shrirammedical.onlineShopping.config;
 
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +25,9 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Getter
+    private static String userToken;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -29,10 +35,16 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
+        String path = request.getContextPath();
+        if (path.startsWith(path + "/auth/isloggedIn")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (header != null && header.startsWith("Bearer ")) {
 
             String token = header.substring(7);
+            userToken = token; // Setting token in variable to be accessed over the services
             String userId = jwtUtil.extractEmail(token);
             System.out.println(token + " --- " + userId);
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -52,4 +64,5 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 }

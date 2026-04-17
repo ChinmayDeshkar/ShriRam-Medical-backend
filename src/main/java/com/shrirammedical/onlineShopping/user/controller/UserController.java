@@ -87,4 +87,9 @@ public class UserController {
             throw new RuntimeException(e);
         }
     }
+
+    @GetMapping("/isloggedIn")
+    public ResponseEntity<?> isLoggedIn() {
+        return ResponseEntity.ok(userService.isLoggedIn());
+    }
 }
