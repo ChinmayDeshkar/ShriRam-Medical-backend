@@ -1,5 +1,7 @@
 package com.shrirammedical.onlineShopping.product.service.impl;
 
+import com.shrirammedical.onlineShopping.common.code.repository.CodeRepo;
+import com.shrirammedical.onlineShopping.config.JwtUtil;
 import com.shrirammedical.onlineShopping.product.dto.ProductUpdateRequest;
 import com.shrirammedical.onlineShopping.product.dto.SearchProductRequest;
 import com.shrirammedical.onlineShopping.product.entity.Category;
@@ -9,8 +11,11 @@ import com.shrirammedical.onlineShopping.product.repository.ProductRepo;
 import com.shrirammedical.onlineShopping.product.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -20,18 +25,29 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;
     private final CategoryRepo categoryRepo;
+//    private final CodeRepo codeRepo;
+
+    @Override
+    public List<Products> getAllProducts() {
+        return productRepo.findAll();
+    }
 
     @Override
     public Products addProduct(Products product) {
 
         log.info("Adding product: " + product);
 
-        // throw an error if something is some
+        // throw an error if something is null
         if(product.getProductName() == null || product.getRate() == null
-            || product.getStock() == null || product.getCategoryId() == null){
+            || product.getStock() == null || product.getProductType() == null){
             throw new RuntimeException("Something getting null while inserting product");
         }
 
+        if(!categoryRepo.existsById(product.getProductType())) {
+            throw new RuntimeException("Category does not present, id = " + product.getProductType());
+        }
+
+        product.setCreatedBy(JwtUtil.getCurrentUser());
         return productRepo.save(product);
     }
 
@@ -45,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (searchProduct.getCategoryId() != null) {
-            return productRepo.findByCategoryId(searchProduct.getCategoryId());
+            return productRepo.findByProductType(searchProduct.getCategoryId());
         }
 
         if (searchProduct.getProductName() != null) {
@@ -81,12 +97,14 @@ public class ProductServiceImpl implements ProductService {
         if (request.getCategoryId() != null) {
             boolean isCategoryPresent = categoryRepo.existsById(request.getCategoryId());
             if(isCategoryPresent){
-                product.setCategoryId(request.getCategoryId());
+                product.setProductType(request.getCategoryId());
             }else {
                 throw new RuntimeException("Category does not present, id = " + request.getCategoryId());
             }
         }
 
+        product.setUpdatedBy(JwtUtil.getCurrentUser());
+        product.setUpdatedDate(LocalDateTime.now());
         return productRepo.save(product);
     }
 
@@ -95,5 +113,14 @@ public class ProductServiceImpl implements ProductService {
 
         log.info("Deleting product with id = " + productId);
         productRepo.deleteById(productId);
+    }
+
+    /**
+     * @param productType
+     * @return
+     */
+    @Override
+    public List<Products> getProductsByProductType(Long productType) {
+        return productRepo.findByProductType(productType) == null ? null : productRepo.findByProductType(productType);
     }
 }

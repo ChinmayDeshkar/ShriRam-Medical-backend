@@ -1,5 +1,6 @@
 package com.shrirammedical.onlineShopping.product.controller;
 
+import com.shrirammedical.onlineShopping.product.dto.CategoryDto;
 import com.shrirammedical.onlineShopping.product.dto.CategoryUpdateRequest;
 import com.shrirammedical.onlineShopping.product.entity.Category;
 import com.shrirammedical.onlineShopping.product.service.CategoryService;
@@ -20,9 +21,8 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE','CUSTOMER')")
-    @GetMapping("/search")
-    List<Category> searchCategory(){
+    @GetMapping("")
+    List<CategoryDto> getAllCategory(){
         return categoryService.findAllCategory();
     }
 

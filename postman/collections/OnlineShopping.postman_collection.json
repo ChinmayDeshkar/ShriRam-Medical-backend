@@ -1,0 +1,815 @@
+{
+  "info": {
+    "_postman_id": "9a0b88d1-8db6-4477-b59d-dfb699bed5c0",
+    "name": "Online Shopping API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Signup",
+          "id": "20c41dd0-5787-44d7-ad8f-a38c43f081d5",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"USR001\",\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phoneNumber\": \"9876543210\",\n  \"password\": \"password123\",\n  \"roleId\": 3,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "id": "93c47329-33ee-4d2f-8162-d3985f191b15",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "id": "1b541090-4ea2-4164-8fc9-4ff4d45e9aa6",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "796c88fe-73ca-47a3-b889-abd4b0ec3399"
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Profile",
+          "id": "f3e38ac9-69aa-4cb2-8796-1d5e94fa61cc",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update My Profile",
+          "id": "391e60bc-432e-4753-91d7-811f626f31a1",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@example.com\",\n  \"phoneNumber\": \"9876543211\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Update User",
+          "id": "1e951cab-ca36-413d-ae58-34812be49260",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin Updated\",\n  \"email\": \"admin@example.com\",\n  \"phoneNumber\": \"9876543212\",\n  \"role\": \"CUSTOMER\",\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/admin/users/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "admin",
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "USR001"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "e3d1348b-c887-40ef-9754-daee90837803"
+    },
+    {
+      "name": "Address",
+      "item": [
+        {
+          "name": "Get Default Address",
+          "id": "496b545a-b2da-4f5a-88e2-2608751b6f08",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/address/default",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "address",
+                "default"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Last Used Address",
+          "id": "67d81b0f-9391-4ab3-8829-f0c206ac665a",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/address/last-used",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "address",
+                "last-used"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Address",
+          "id": "cb3ede35-153c-43b7-ac14-76208823904d",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"addressLine1\": \"123 Main Street\",\n  \"addressLine2\": \"Apt 4B\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"pinCode\": \"400001\",\n  \"country\": \"India\",\n  \"isDefault\": true,\n  \"lastUsed\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/address/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "address",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Address",
+          "id": "071b4ada-f810-4b3f-8d3a-c95a6a2a9b82",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"addressId\": 1,\n  \"addressLine1\": \"456 New Street\",\n  \"addressLine2\": \"Floor 2\",\n  \"city\": \"Pune\",\n  \"state\": \"Maharashtra\",\n  \"pinCode\": \"411001\",\n  \"country\": \"India\",\n  \"isDefault\": false,\n  \"lastUsed\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/address/update",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "address",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Address",
+          "id": "44c10c30-ace5-402d-b4e3-11a6a28156d5",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/address/delete?addressId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "address",
+                "delete"
+              ],
+              "query": [
+                {
+                  "key": "addressId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "23e1b261-9ea3-470b-94af-d8b07621df61"
+    },
+    {
+      "name": "Category",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "id": "3ba410ea-5d11-4027-86fd-a731e0ab0452",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/category",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "category"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Category",
+          "id": "26e6fcbd-5369-4db6-9cfb-e6066ed1bd8d",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryName\": \"Medicines\",\n  \"description\": \"All types of medicines\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/category/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "category",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "id": "76946e01-51d4-4b7f-9312-d9f237760abf",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryName\": \"Updated Medicines\",\n  \"description\": \"Updated description\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/category/update/:categoryId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "category",
+                "update",
+                ":categoryId"
+              ],
+              "variable": [
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "id": "b5684279-fc3d-4099-92b9-62f65a8b3c5e",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/category/delete/:categoryId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "category",
+                "delete",
+                ":categoryId"
+              ],
+              "variable": [
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "01ecac53-f0ac-4296-90c7-b0f78a522122"
+    },
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "Get All Products",
+          "id": "f167ed89-e71a-4def-8885-0f7cd71948e0",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/product/all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Products",
+          "id": "aace0405-12bc-4d7a-89de-1c47148f99bd",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/product/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "productId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "productName",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "categoryId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "active",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Products By Category",
+          "id": "bde76d0d-dd86-461a-9614-7c23de6164ab",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/product/getByCategory/:categoryId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "getByCategory",
+                ":categoryId"
+              ],
+              "variable": [
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Product",
+          "id": "b47c7540-220a-4221-9c9d-45e35eb6f118",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productName\": \"Paracetamol 500mg\",\n  \"shortDescription\": \"Pain reliever\",\n  \"description\": \"Used for fever and mild pain relief\",\n  \"rate\": 25.50,\n  \"stock\": 100,\n  \"productType\": 1,\n  \"expiryDate\": \"31-12-2026\",\n  \"manufacturingDate\": \"01-01-2025\",\n  \"batchNumber\": \"BATCH001\",\n  \"isPrescriptionRequired\": false,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/product/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product",
+          "id": "7b963d0b-af37-4b44-8443-1d1beca0ed87",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productName\": \"Paracetamol 650mg\",\n  \"rate\": 30.00,\n  \"stock\": 150,\n  \"categoryId\": 1,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/product/update/:productId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "update",
+                ":productId"
+              ],
+              "variable": [
+                {
+                  "key": "productId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product",
+          "id": "2e218752-46fc-41b3-856a-78a34472dd87",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/product/delete?id=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "delete"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "e7b58a47-a0fa-4289-9169-a8922220be67"
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "id": "41a05774-1f60-43a7-8706-1dce4cf07bce",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cart/get",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cart",
+                "get"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add to Cart",
+          "id": "4514a7ba-ae4a-45e6-86d9-6ff60e03cf50",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": 1,\n  \"quantity\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cart",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cart",
+          "id": "8c2fd6aa-737b-4de8-aadf-a1b43123c0be",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemId\": 1,\n  \"quantity\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart/update",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cart",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get product quantity in cart",
+          "id": "7f2e5ac9-79e1-464f-abc3-612968c2061f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cart/get",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cart",
+                "get"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "efa969cf-0427-4c80-a654-427d0bb0860d"
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "create order",
+          "id": "ddba9712-4560-45f8-a4d7-b0c3fd238a8d",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cart/get",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cart",
+                "get"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "cd429910-fe74-4269-92e3-d30a9ce6ac65"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "id": "67363759-23d6-4306-93f6-47226474f87e",
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "id": "62818a5c-2efa-4983-961e-2040c8b8d6be",
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
