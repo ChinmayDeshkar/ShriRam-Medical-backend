@@ -3,14 +3,18 @@ package com.shrirammedical.onlineShopping.product.controller;
 import com.shrirammedical.onlineShopping.product.dto.ProductUpdateRequest;
 import com.shrirammedical.onlineShopping.product.dto.SearchProductRequest;
 import com.shrirammedical.onlineShopping.product.entity.Products;
+import com.shrirammedical.onlineShopping.product.service.ImageUploadService;
 import com.shrirammedical.onlineShopping.product.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +25,8 @@ public class ProductController {
 
     @Autowired
     ProductService productService;
+    @Autowired
+    ImageUploadService imageUploadService;
 
     @GetMapping("/all")
     List<Products> getAllProducts(){
@@ -32,10 +38,13 @@ public class ProductController {
         }
     }
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
-    @PostMapping("/add")
-    ResponseEntity<?> addProduct(@RequestBody Products product){
+    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<?> addProduct(
+            @RequestPart("product") Products product,
+            @RequestPart("images") List<MultipartFile> images){
         try {
-            productService.addProduct(product);
+            List<String> imageUrls = imageUploadService.uploadImage(images);
+            productService.addProduct(product, imageUrls);
             return ResponseEntity.status(HttpStatus.OK).body(Map.of("Message", "Product added"));
         } catch (Exception e) {
             log.error("Error occurred while adding product, " + e);
@@ -71,10 +80,11 @@ public class ProductController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
-    @DeleteMapping("/delete?id={productId}")
+//    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
+    @DeleteMapping("/delete/{productId}")
     ResponseEntity<?> deleteProduct(@PathVariable Long productId){
         try{
+            log.info("Coming here");
             productService.deleteProduct(productId);
             return ResponseEntity.ok(Map.of("Message", "Product Deleted"));
         } catch (Exception e) {

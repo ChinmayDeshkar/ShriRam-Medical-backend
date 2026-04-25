@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 public class Products {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long productId;
     private String productName;
     private String shortDescription;
@@ -40,4 +41,8 @@ public class Products {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private  LocalDateTime updatedDate;
 
+    @ElementCollection
+    @CollectionTable(name = "product_images")
+    @Column(name = "image_url")
+    private List<String> imageUrls;
 }

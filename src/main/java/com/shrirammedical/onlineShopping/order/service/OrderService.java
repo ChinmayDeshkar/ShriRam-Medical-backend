@@ -17,4 +17,6 @@ public interface OrderService {
 
     // Get Order by id
     Order getOrderById(Long id);
+
+    void markAsConfirmed(Long orderId);
 }
