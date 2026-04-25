@@ -130,7 +130,9 @@ public class CartServiceImpl implements CartService {
     @Override
     public int getCartQuantityByProductAndUserId(Long productId) {
         CartResponse cartResponse = getCart();
-        cartResponse.getItems().forEach(System.out::println);
+        if(cartResponse == null) {
+            return 0;
+        }
         int quantity = cartResponse.getItems().stream()
                 .filter(item -> Objects.equals(item.getProductId(), productId))
                 .mapToInt(CartItemsDto::getQuantity)

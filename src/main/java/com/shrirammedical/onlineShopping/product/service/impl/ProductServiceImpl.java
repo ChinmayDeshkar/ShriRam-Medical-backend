@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Products addProduct(Products product) {
+    public Products addProduct(Products product, List<String> imageUrls) {
 
         log.info("Adding product: " + product);
 
@@ -48,6 +48,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         product.setCreatedBy(JwtUtil.getCurrentUser());
+        product.setImageUrls(imageUrls);
         return productRepo.save(product);
     }
 

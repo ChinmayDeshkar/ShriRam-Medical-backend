@@ -5,10 +5,12 @@ import com.shrirammedical.onlineShopping.cart.repository.CartRepo;
 import com.shrirammedical.onlineShopping.order.dto.OrderItemEvent;
 import com.shrirammedical.onlineShopping.order.dto.OrderPlacedEvent;
 import com.shrirammedical.onlineShopping.order.dto.OrderRequestDto;
+import com.shrirammedical.onlineShopping.order.dto.OrderStatus;
 import com.shrirammedical.onlineShopping.order.entity.Order;
 import com.shrirammedical.onlineShopping.order.entity.OrderItems;
 import com.shrirammedical.onlineShopping.order.repository.OrderRepo;
 import com.shrirammedical.onlineShopping.order.service.OrderService;
+import com.shrirammedical.onlineShopping.payment.dto.PaymentStatus;
 import com.shrirammedical.onlineShopping.product.entity.Products;
 import com.shrirammedical.onlineShopping.product.repository.ProductRepo;
 import com.shrirammedical.onlineShopping.user.entity.Address;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -80,8 +83,13 @@ public class OrderServiceImpl implements OrderService {
 
         order.setItems(orderItems);
         order.setUserId(userId);
-        order.setOrderStatus("PENDING");
-        order.setPaymentStatus("PENDING");
+        if ("COD".equals(request.getPaymentMethod())) {
+            order.setPaymentStatus(PaymentStatus.PENDING_PAYMENT); // paid on delivery
+            order.setOrderStatus(OrderStatus.CONFIRMED);    // order confirmed immediately
+        } else {
+            order.setPaymentStatus(PaymentStatus.PENDING_PAYMENT);
+            order.setOrderStatus(OrderStatus.PAYMENT_PENDING);
+        }
         order.setPaymentMethod(request.getPaymentMethod());
         order.setAddress(formatAddress(request.getAddressId()));
         order.setTotalAmount(calculateTotalAmount(orderItems));
@@ -91,7 +99,10 @@ public class OrderServiceImpl implements OrderService {
         log.info("Order created with id: {}", savedOrder.getOrderId());
 
         // Empty the cart
-        doEmptyCart(userId);
+        if(Objects.equals(order.getPaymentMethod(), "COD")){
+            doEmptyCart(userId);
+        }
+
 
         // Kafka message for Notification
         publishOrderPlacedEvent(order);
@@ -113,7 +124,9 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public List<Order> getAllOrders() {
-        return List.of();
+        String userId = currentUser();
+        return orderRepo.findOrderByUserId(userId);
+
     }
 
     /**
@@ -123,6 +136,19 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order getOrderById(Long id) {
         return null;
+    }
+
+    /**
+     * @param orderId
+     */
+    @Override
+    public void markAsConfirmed(Long orderId) {
+        int updated = orderRepo.updateOrderStatus(orderId, "CONFIRMED");
+        if (updated > 0) {
+            log.info("Order confirmed with id: {}", orderId);
+        } else {
+            throw new RuntimeException("Error while confirming order status for id: " + orderId);
+        }
     }
 
     // Private Helper Methods
